@@ -1,0 +1,102 @@
+\documentclass[12pt]{article}
+
+% Page setup
+\usepackage[a4paper, margin=1in]{geometry}
+
+% Font
+\usepackage{mathpazo}
+
+% Formatting packages
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{titlesec}
+
+% Remove page numbers
+\pagenumbering{gobble}
+
+% Line spacing
+\onehalfspacing
+
+% Code style
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    breaklines=true,
+    tabsize=2
+}
+
+% Section formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+
+\begin{document}
+\vspace{1cm}
+\section*{Experiment No 01}
+\section*{Experiment Name}
+A program to read a C program from a source file and copy it into a text file.
+
+\section*{Objective}
+The objective of this experiment is to understand and implement file handling operations in C programming. This includes opening files, reading data from a source file, writing data into a destination file, and properly closing files. The experiment also helps in understanding character-wise file copying using standard input/output functions.
+
+\section*{Algorithm}
+\begin{enumerate}
+    \item Start the program.
+    \item Declare file pointers for source and destination files.
+    \item Open the source file in read mode.
+    \item Open the destination file in write mode.
+    \item Check whether both files are opened successfully.
+    \item Read characters from the source file one by one.
+    \item Write each character into the destination file.
+    \item Repeat the process until the end of the source file is reached.
+    \item Close both the files.
+    \item Display a success message.
+    \item End the program.
+\end{enumerate}
+\newpage
+\section*{Source Code}
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    FILE *source, *target;
+    char ch;
+
+    source = fopen("source.c", "r");
+    target = fopen("output.txt", "w");
+
+    if (source == NULL || target == NULL) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    while ((ch = fgetc(source)) != EOF) {
+        fputc(ch, target);
+    }
+
+    printf("File copied successfully.\n");
+
+    fclose(source);
+    fclose(target);
+
+    return 0;
+}
+\end{lstlisting}
+
+\section*{Input}
+A C source file named \texttt{source.c} containing a valid C program is provided as input to the program.
+\newpage
+\section*{Output}
+The contents of the input file \texttt{source.c} are copied successfully into the output file \texttt{output.txt}.
+
+\vspace{0.4cm}
+\textbf{Output Screenshot:}
+
+\begin{center}
+    % Insert your screenshot image file below
+    \includegraphics[width=0.85\textwidth]{test.png}
+\end{center}
+
+\section*{Discussion}
+This experiment demonstrates the use of file handling concepts in C programming. Functions such as \texttt{fopen()}, \texttt{fgetc()}, \texttt{fputc()}, and \texttt{fclose()} were used to perform file operations. Character-by-character copying ensures accurate duplication of file contents. Proper error handling was implemented to check whether files are opened successfully. This experiment provides a strong foundation for understanding more advanced file operations in C.
+
+\end{document}
