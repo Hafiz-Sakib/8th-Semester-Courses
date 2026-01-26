@@ -1,0 +1,162 @@
+\documentclass[12pt,a4paper]{article}
+
+% -------------------- Packages --------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{mathpazo} % Palatino font
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\onehalfspacing
+\linespread{1.05}
+\pagestyle{empty}
+\date{}
+
+\title{\textbf{Lab 1: Introduction to AWS Identity and Access Management (IAM)}}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+% -------------------- Objective --------------------
+\section*{Objective}
+The objective of this lab is to gain hands-on experience with AWS Identity and Access Management (IAM) by exploring how users, groups, and policies are used to control access to AWS resources. The lab demonstrates role-based access control by assigning permissions through IAM groups and validating access by logging in as different users. This helps reinforce the principle of least privilege and foundational cloud security concepts.
+
+\textbf{Key AWS services and concepts covered:}
+\begin{itemize}
+    \item AWS Identity and Access Management (IAM)
+    \item IAM Users and User Groups
+    \item Managed Policies and Inline Policies
+    \item Role-Based Access Control (RBAC)
+    \item AWS Management Console access using IAM credentials
+\end{itemize}
+
+% -------------------- Scenario --------------------
+\section*{Scenario}
+An organization is expanding its use of Amazon Web Services and relies heavily on Amazon EC2 and Amazon S3. As new employees join, they require controlled access to cloud resources based on their job roles. To maintain security and operational efficiency, permissions must be managed centrally using IAM groups instead of assigning permissions individually.
+
+In this lab scenario, three IAM users are created and assigned distinct responsibilities. One user provides read-only support for Amazon S3, another provides read-only support for Amazon EC2, and a third user acts as an EC2 administrator with permissions to view, start, and stop EC2 instances. The expected outcome is that each user can access only the AWS services and actions permitted by their assigned IAM group and policies.
+
+% -------------------- Working Methodology --------------------
+\section*{Working Methodology}
+
+\subsection*{Task 1: Exploring IAM Users, Groups, and Policies}
+The IAM console was accessed to review pre-created IAM users and user groups. Each user was examined to verify permissions, group membership, and security credentials. IAM group policies were analyzed to understand the difference between managed policies and inline policies and how they define access to AWS services.
+
+\textbf{Observations:}
+\begin{itemize}
+    \item Users had no permissions unless assigned through groups.
+    \item Managed policies provided reusable permission sets, while inline policies were specific to individual groups.
+\end{itemize}
+
+% -------------------- Task 2 --------------------
+\subsection*{Task 2: Assigning Users to IAM Groups}
+Users were assigned to IAM groups based on their job roles. User-1 was added to the S3-Support group, user-2 to the EC2-Support group, and user-3 to the EC2-Admin group. This ensured that permissions were inherited automatically through group policies rather than assigned individually.
+
+\textbf{Completed Actions:}
+\begin{itemize}
+    \item Task 2a: Added user-1 to S3-Support group
+    \item Task 2b: Added user-2 to EC2-Support group
+    \item Task 2c: Added user-3 to EC2-Admin group
+\end{itemize}
+
+\textbf{Observations:}
+\begin{itemize}
+    \item Each group correctly showed one assigned user.
+    \item Minor authorization warnings appeared due to lab restrictions but did not affect completion.
+\end{itemize}
+
+\subsubsection*{Added user-1 to S3-Support group}
+This screenshot shows user-1 being successfully added to the S3-Support IAM group. By assigning this group membership, user-1 inherits read-only permissions for Amazon S3 through the attached managed policy. This confirms the correct implementation of role-based access control.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{1.png}
+    \caption{Added user-1 to S3-Support group}
+\end{figure}
+
+\subsubsection*{Added user-2 to EC2-Support group}
+This image illustrates the assignment of user-2 to the EC2-Support group. The group provides read-only access to Amazon EC2 resources, allowing the user to view instance details without making modifications. This step ensures operational support access without administrative privileges.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{2.png}
+    \caption{Added user-2 to EC2-Support group}
+\end{figure}
+
+\subsubsection*{Added user-3 to EC2-Admin group}
+This screenshot confirms that user-3 was added to the EC2-Admin group. The inline policy attached to this group allows starting and stopping EC2 instances in addition to viewing them. This assignment grants administrator-level permissions required for instance management.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{3.png}
+    \caption{Added user-3 to EC2-Admin group}
+\end{figure}
+
+% -------------------- Task 3 --------------------
+\subsection*{Task 3: User Login and Permission Validation}
+Each IAM user logged in using the IAM sign-in URL in a private browser session to validate permissions. User-1 successfully accessed Amazon S3 but was denied access to EC2. User-2 could view EC2 instances but was unable to stop them and had no access to S3. User-3 successfully stopped an EC2 instance, confirming administrator-level permissions.
+
+\subsubsection*{user-1 logged in}
+This screenshot shows a successful login by user-1 using the IAM sign-in URL. The user was able to access Amazon S3 resources, confirming that the S3-Support permissions were correctly applied. Access to unauthorized services was restricted as expected.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{4.png}
+    \caption{user-1 logged in}
+\end{figure}
+
+\subsubsection*{user-1 logged in}
+This image further demonstrates user-1 navigating the AWS Management Console. It reinforces that the user could only access permitted services and was restricted from accessing Amazon EC2. This validates correct enforcement of IAM policies.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{5.png}
+    \caption{user-1 logged in}
+\end{figure}
+
+\subsubsection*{user-2 logged in}
+This screenshot displays a successful login by user-2. The user was able to view EC2 instances due to read-only EC2 permissions. However, modification actions were restricted, maintaining security boundaries.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{6.png}
+    \caption{user-2 logged in}
+\end{figure}
+
+\subsubsection*{user-2 ec2 stop instance attempt failed}
+This image captures the failed attempt by user-2 to stop an EC2 instance. The error message confirms that the read-only EC2 policy prevented the action. This demonstrates effective enforcement of permission limitations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{7.png}
+    \caption{user-2 ec2 stop instance attempt failed}
+\end{figure}
+
+\subsubsection*{user-3 ec2 stop instance attempt successful}
+This screenshot shows user-3 successfully stopping an EC2 instance. The successful action confirms that EC2 administrative permissions were correctly assigned. This validates that the EC2-Admin group allows instance management operations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{9.png}
+    \caption{user-3 ec2 stop instance attempt successful}
+\end{figure}
+
+% -------------------- Results --------------------
+\section*{Results Summary}
+All lab tasks were completed successfully and verified through the lab grading system. The final score achieved was \textbf{40/40}, confirming correct configuration of IAM users, groups, and permissions.
+
+\begin{itemize}
+    \item Task 2a–2c: User-to-group assignments completed successfully 
+    \item Task 3a–3e: User login and permission testing completed successfully 
+\end{itemize}
+
+% -------------------- Conclusion --------------------
+\section*{Conclusion}
+This lab provided practical exposure to AWS Identity and Access Management and demonstrated how access to cloud resources can be securely controlled using users, groups, and policies. Assigning permissions through IAM groups simplified management and ensured adherence to the principle of least privilege. Successfully validating permissions through multiple user logins reinforced the importance of testing access controls. Overall, the lab strengthened foundational knowledge of cloud security and access management, which is essential for designing secure and scalable AWS environments.
+
+\end{document}
