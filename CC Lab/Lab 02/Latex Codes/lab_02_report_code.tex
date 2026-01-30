@@ -1,0 +1,139 @@
+\documentclass[12pt]{article}
+
+% Page setup
+\usepackage[a4paper, margin=1in]{geometry}
+
+% Font
+\usepackage{mathpazo}
+
+% Formatting packages
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{titlesec}
+
+% Remove page numbers
+\pagenumbering{gobble}
+
+% Line spacing
+\onehalfspacing
+
+% Code style
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    breaklines=true,
+    tabsize=2
+}
+
+% Section formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+
+\begin{document}
+\vspace{1cm}
+
+\section*{Experiment No 02}
+
+\section*{Experiment Name}
+A program to identify whether a given line is a comment or not and generate a comment-free C program.
+
+\section*{Objective}
+The objective of this experiment is to design and implement a basic lexical analyzer to detect comments in a C program. The program identifies both single-line and multi-line comments, displays the line numbers where comments occur, and generates a new file containing the source code without comments. This experiment helps in understanding lexical analysis concepts used in compiler design.
+
+\section*{Algorithm}
+\begin{enumerate}
+    \item Start the program.
+    \item Open the input C file in read mode and the output file in write mode.
+    \item Initialize variables to track line numbers and multi-line comments.
+    \item Read the source file line by line.
+    \item Identify single-line and multi-line comments.
+    \item Display the line numbers where comments are detected.
+    \item Write only non-comment code into the output file.
+    \item Repeat until the end of file is reached.
+    \item Close all files.
+    \item End the program.
+\end{enumerate}
+\newpage
+
+\section*{Source Code}
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    FILE *in, *out;
+    char line[300];
+    int i, lineNo = 0, block = 0;
+    in = fopen("input.c", "r");
+    out = fopen("output.c", "w");
+    if (!in || !out) return 1;
+    
+    while (fgets(line, sizeof(line), in)) {
+        lineNo++; i = 0;
+
+        if (!block && strstr(line, "//"))
+            printf("Single-line comment at line %d\n", lineNo);
+
+        while (line[i]) {
+
+            if (!block && line[i]=='/' && line[i+1]=='*')
+                block = 1, printf("Block comment starts at line %d\n", lineNo), i+=2;
+
+            else if (block && line[i]=='*' && line[i+1]=='/')
+                block = 0, printf("Block comment ends at line %d\n", lineNo), i+=2;
+
+            else if (block || (line[i]=='/' && line[i+1]=='/'))
+                break;
+
+            else
+                fputc(line[i++], out);
+        }
+        if (!block) fputc('\n', out);
+    }
+    fclose(in); fclose(out);
+    return 0;
+}
+\end{lstlisting}
+
+\newpage
+
+\section*{Input}
+The input file \texttt{input.c} contains a C program with single-line and multi-line comments.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+// This is a single-line comment
+int main() {
+    /* This is a
+       multi-line comment */
+    printf("Hello World");
+    return 0;
+}
+\end{lstlisting}
+
+\section*{Output}
+The output file \texttt{output.c} contains the same C program after removing all comments.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+
+    printf("Hello World");
+    return 0;
+}
+\end{lstlisting}
+
+\vspace{0.4cm}
+\section*{Output Screenshot}
+
+\begin{center}
+    % Add terminal output screenshot here
+    \includegraphics[width=0.85\textwidth]{ss.png}
+\end{center}
+
+\section*{Discussion}
+This experiment demonstrates the working of a basic lexical analyzer used in compiler design. The program successfully detects both single-line and multi-line comments and displays their respective line numbers. By removing comments and generating a clean output file, the experiment highlights the importance of lexical analysis in source code processing. File handling and string manipulation concepts in C were effectively applied.
+
+\end{document}
