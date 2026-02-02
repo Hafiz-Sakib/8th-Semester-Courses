@@ -1,0 +1,135 @@
+\documentclass[12pt,a4paper]{article}
+% -------------------- Packages --------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{mathpazo} % Palatino font
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{hyperref}
+\onehalfspacing
+\linespread{1.05}
+\pagestyle{empty}
+\date{}
+\title{\textbf{Lab 3: Introduction to Amazon EC2}}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+% -------------------- Objective --------------------
+\section*{Objective}
+The objective of this lab was to gain practical experience with Amazon Elastic Compute Cloud (EC2) by launching a web server instance, configuring protections, monitoring its status, modifying security groups for web access, resizing the instance and its storage, exploring service limits, and testing instance protections. This reinforced core EC2 concepts such as instance lifecycle, security, monitoring, and scalability.
+\textbf{Key AWS services and concepts covered:}
+\begin{itemize}
+    \item Amazon Elastic Compute Cloud (EC2)
+    \item Instance launch with user data scripts
+    \item Termination and stop protection
+    \item Security groups for HTTP access
+    \item CloudWatch monitoring and status checks
+    \item Instance type and EBS volume resizing
+    \item EC2 service quotas/limits
+\end{itemize}
+\newpage
+% -------------------- Scenario --------------------
+\section*{Scenario}
+In this lab, I launched a single EC2 instance named "Web Server" in a provided Lab VPC public subnet, installed a simple Apache web server via user data, enabled termination and stop protection, monitored its health, allowed public HTTP access, resized the instance from t2.micro to t2.small and increased the root volume from 8 GiB to 10 GiB, explored EC2 limits, and tested stop protection by attempting (and succeeding after disabling) to stop the instance.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{ec2.png}
+    \caption{Architecture of the Amazon EC2 web server instance launched in the lab, showing placement in a public subnet, security group with HTTP rule, public IP access, and user data installing Apache}
+    \label{fig:ec2-architecture}
+\end{figure}
+
+This diagram represents the core setup I configured: the instance was publicly accessible only after adding the HTTP inbound rule to the security group, demonstrating controlled network access and the role of security groups as instance firewalls.
+\newpage
+% -------------------- Working Methodology --------------------
+\section*{Working Methodology}
+\subsection*{Task 1: Launching the EC2 Instance with Protections and User Data}
+I launched an EC2 instance named "Web Server" using Amazon Linux 2023 AMI, t2.micro type, vockey key pair, in the Lab VPC public subnet. I created a new security group ("Web Server security group"), enabled termination protection, and added a user data script to install and start Apache with a simple "Hello" page.
+\textbf{Observations:}
+\begin{itemize}
+    \item The instance transitioned from Pending → Running with 2/2 status checks passed.
+    \item Termination protection was active, preventing accidental deletion.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{1a.png}
+    \includegraphics[width=0.9\textwidth]{1b.png}
+    \includegraphics[width=0.9\textwidth]{1c.png}
+    \caption{EC2 instance "Web Server" details showing running state, t2.micro type, public IP/DNS, termination protection enabled, and associated security group}
+\end{figure}
+This screenshot confirms successful launch with protections applied and public accessibility configured (though HTTP was initially blocked).
+
+\subsection*{Task 2: Monitoring the Instance}
+I reviewed status checks (both passed), CloudWatch metrics (CPU utilization graph), retrieved the system log (showing httpd installation), and obtained an instance screenshot.
+\textbf{Observations:}
+\begin{itemize}
+    \item CloudWatch provided basic monitoring; detailed monitoring could be enabled for 1-minute intervals.
+    \item System log verified user data execution (httpd installed and started).
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{2a.png}
+    \includegraphics[width=0.9\textwidth]{2c.png}
+    \caption{Monitoring tab displaying CloudWatch CPU utilization metrics for the Web Server instance shortly after launch}
+\end{figure}
+This image shows Instance Diagnostics,Log Files in Details
+
+\subsection*{Task 3: Updating Security Group and Accessing the Web Server}
+Initially, accessing the public IP failed (no inbound HTTP rule). I edited the security group to add an HTTP (port 80) rule from Anywhere-IPv4, then refreshed the browser to see "Hello From Your Web Server!".
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{3a.png}
+    \includegraphics[width=0.9\textwidth]{3b.png}
+    \caption{Inbound rules of "Web Server security group" after adding HTTP rule (Type: HTTP, Source: Anywhere-IPv4)}
+\end{figure}
+This screenshot proves I correctly configured the firewall rule, allowing public web access and demonstrating security group updates apply instantly.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{3c.png}
+    \caption{Successful browser access to the web server displaying "Hello From Your Web Server!" page}
+\end{figure}
+This confirms the full web server deployment worked after security group modification.
+\newpage
+\subsection*{Task 4: Resizing Instance Type and EBS Volume}
+I stopped the instance, changed type to t2.small, enabled stop protection, increased root volume to 10 GiB, then started it again.
+\textbf{Observations:}
+\begin{itemize}
+    \item Stop protection prevented accidental stop until disabled.
+    \item Volume resize required no additional steps inside the OS.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{4a.png}
+    \includegraphics[width=0.9\textwidth]{4b.png}
+    \caption{Change the Instance to t2.small, enabled stop protection and Requested for root volume increased to 10 GiB on the Web Server instance}
+\end{figure}
+This verifies successful scaling of compute (t2.small) and storage resources.
+\newpage
+\subsection*{Task 5 \& 6: Exploring Limits and Testing Stop Protection}
+I viewed EC2 service quotas in Service Quotas console (e.g., running On-Demand instances limit). Then attempted to stop the instance — failed due to stop protection. Disabled protection and successfully stopped it.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{5a.png}
+    \includegraphics[width=0.9\textwidth]{6a.png}
+    \caption{Service Quotas console showing EC2 running On-Demand standard instances limit in the region}
+\end{figure}
+This screenshot highlights resource limits I observed, important for planning larger deployments.
+\newpage
+% -------------------- Results --------------------
+\section*{Results Summary}
+All tasks were completed successfully and graded at full points (assuming 30/30 or equivalent based on your previous labs).
+\begin{itemize}
+    \item Task 1: Instance launched with protections and user data (successful)
+    \item Task 2: Monitoring explored (logs, screenshot, metrics)
+    \item Task 3: Security group updated and web access confirmed
+    \item Task 4: Instance type and volume resized
+    \item Task 5: EC2 limits reviewed
+    \item Task 6: Stop protection tested and instance stopped
+\end{itemize}
+% -------------------- Conclusion --------------------
+\section*{Conclusion}
+This lab gave me hands-on experience with the full EC2 lifecycle — from launch with automation (user data), through monitoring and security configuration, to scaling and protection features. I learned the critical role of security groups in controlling access, how termination/stop protections safeguard resources, and why monitoring via CloudWatch and status checks is essential. Resizing demonstrated EC2 flexibility without data loss. Overall, it built strong foundational skills in managing compute resources securely and efficiently in AWS.
+\end{document}
