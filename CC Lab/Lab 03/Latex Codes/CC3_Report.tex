@@ -1,0 +1,167 @@
+\documentclass[12pt]{article}
+
+% Page setup
+\usepackage[a4paper, margin=1in]{geometry}
+
+% Font
+\usepackage{mathpazo}
+
+% Formatting packages
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{titlesec}
+
+% Remove page numbers
+\pagenumbering{gobble}
+
+% Line spacing
+\onehalfspacing
+
+% Code style
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    breaklines=true,
+    tabsize=2
+}
+
+% Section formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+
+\begin{document}
+\vspace{1cm}
+
+\section*{Experiment No 03}
+
+\section*{Experiment Name}
+Write a program to identify instances of unique keywords from a C program.
+
+\section*{Objective}
+The objective of this experiment is to design and implement a C program that scans a given C source file, identifies all unique C language keywords, and displays their occurrences. This experiment helps in understanding lexical analysis, keyword recognition, and file handling concepts used in compiler design.
+
+\section*{Algorithm}
+\begin{enumerate}
+    \item Open the input C file in read mode.
+    \item Read the file character by character.
+    \item Extract words containing only alphabetic characters.
+    \item Compare each word with the list of C keywords.
+    \item Store unique keywords and count their occurrences.
+    \item Display the identified keywords with their counts.
+    \item Close the file.
+\end{enumerate}
+
+\newpage
+
+\section*{Source Code}
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_KEYWORDS 32
+#define MAX_WORD_LEN 20
+
+struct keyword {
+    char word[MAX_WORD_LEN];
+    int count;
+};
+
+int isKeyword(char word[]) {
+    char *keywords[MAX_KEYWORDS] = {
+        "auto","break","case","char","const","continue","default",
+        "do","double","else","enum","extern","float","for","goto",
+        "if","int","long","register","return","short","signed",
+        "sizeof","static","struct","switch","typedef","union",
+        "unsigned","void","volatile","while"
+    };
+
+    for (int i = 0; i < MAX_KEYWORDS; i++) {
+        if (strcmp(word, keywords[i]) == 0)
+            return 1;
+    }
+    return 0;
+}
+
+int findKeyword(struct keyword k[], int count, char word[]) {
+    for (int i = 0; i < count; i++) {
+        if (strcmp(k[i].word, word) == 0)
+            return i;
+    }
+    return -1;
+}
+
+int main() {
+    FILE *fp;
+    char ch, word[MAX_WORD_LEN];
+    struct keyword found[MAX_KEYWORDS];
+    int i = 0, kcount = 0;
+    fp = fopen("input.c", "r");
+    if (fp == NULL) {
+        printf("Error: File not found!\n");
+        return 0;
+    }
+    while ((ch = fgetc(fp)) != EOF) {
+        if (isalpha(ch)) {
+            i = 0;
+            while (isalpha(ch)) {
+                word[i++] = ch;
+                ch = fgetc(fp);
+            }
+            word[i] = '\0';
+
+            if (isKeyword(word)) {
+                int index = findKeyword(found, kcount, word);
+                if (index == -1 && kcount < MAX_KEYWORDS) {
+                    strcpy(found[kcount].word, word);
+                    found[kcount].count = 1;
+                    kcount++;
+                } else if (index != -1) {
+                    found[index].count++;
+                }
+            }
+        }
+    }
+
+    fclose(fp);
+
+    printf("\nKeyword\t\tCount\n");
+    printf("----------------------\n");
+    for (i = 0; i < kcount; i++) {
+        printf("%-10s\t%d\n", found[i].word, found[i].count);
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
+\newpage
+
+\section*{Input}
+The input file \texttt{input.c} contains the following C program.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main()
+{
+    float celsius, fahrenheit;
+    printf("Enter temperature in Celsius: ");
+    scanf("%f", &celsius);
+    fahrenheit = (celsius * 9 / 5) + 32;
+    printf("%.2f Celsius = %.2f Fahrenheit", celsius, fahrenheit);
+    return 0;
+}
+\end{lstlisting}
+
+\section*{Output Screenshot}
+
+\begin{center}
+    % Add terminal output screenshot here
+    \includegraphics[width=0.85\textwidth]{ss.png}
+\end{center}
+
+\section*{Discussion}
+This experiment demonstrates the identification of unique C keywords using a simple lexical analysis approach. The program successfully scans the source file, recognizes valid keywords, and counts their occurrences. The experiment highlights important compiler design concepts such as tokenization, keyword matching, and file processing.
+
+\end{document}
