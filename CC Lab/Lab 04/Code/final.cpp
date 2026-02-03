@@ -2,7 +2,8 @@
 #include <regex>
 using namespace std;
 
-int main() {
+int main()
+{
     int t;
     string pattern, str;
 
@@ -10,7 +11,8 @@ int main() {
     cout << "Enter number of test cases: ";
     cin >> t;
 
-    while (t--) {
+    while (t--)
+    {
         // Read regex pattern
         cout << "Enter regular expression: ";
         cin >> pattern;
@@ -23,9 +25,12 @@ int main() {
         regex r(pattern);
 
         // Match string with regex
-        if (regex_match(str, r)) {
+        if (regex_match(str, r))
+        {
             cout << "Match Found" << endl;
-        } else {
+        }
+        else
+        {
             cout << "No Match" << endl;
         }
     }
