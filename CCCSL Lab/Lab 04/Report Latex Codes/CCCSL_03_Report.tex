@@ -1,0 +1,124 @@
+\documentclass[12pt,a4paper]{article}
+% -------------------- Packages --------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{mathpazo} % Palatino font
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{hyperref}
+\onehalfspacing
+\linespread{1.05}
+\pagestyle{empty}
+\date{}
+\title{\textbf{Lab 4: Working with Amazon Elastic Block Store (EBS)}}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+% -------------------- Objective --------------------
+\section*{Objective}
+The main goal of this lab was to understand how Amazon Elastic Block Store (EBS) works as persistent storage for EC2 instances. I created a new EBS volume, attached it to an existing instance, formatted it, mounted it, wrote some data, took a snapshot for backup, and then restored that snapshot to a new volume to see how data recovery works.
+\textbf{Key AWS services and concepts covered:}
+\begin{itemize}
+    \item Amazon Elastic Block Store (EBS)
+    \item Creating and attaching EBS volumes
+    \item Formatting and mounting volumes in Linux
+    \item Updating /etc/fstab for persistent mounting
+    \item Creating point-in-time snapshots
+    \item Restoring data from snapshots
+\end{itemize}
+% -------------------- Scenario --------------------
+\section*{Scenario}
+In this lab there was already an EC2 instance called “Lab” running. I had to create a small additional storage volume (1 GiB), connect it to that instance, set it up so the operating system could use it, save some data, take a backup (snapshot), delete the test file to simulate data loss, and then bring the data back using a new volume created from the snapshot.
+
+\subsubsection*{Lab Architecture Overview}
+The diagram below shows the basic setup I worked with: one EC2 instance with its original root volume, plus the new EBS volume I created and attached, and later the restored volume from the snapshot.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{arc.png}
+    \caption{Overview of EC2 instance with root volume and additional EBS volume attached (later restored from snapshot)}
+    \label{fig:ebs-overview}
+\end{figure}
+
+This picture helped me understand that EBS volumes are separate from the instance itself and can survive even if something happens to the EC2 server.
+
+% -------------------- Working Methodology --------------------
+\section*{Working Methodology}
+\subsection*{Task 1 \& 2: Creating and Attaching the EBS Volume}
+I went to the EC2 console, checked that the “Lab” instance was in us-east-1a, then created a new 1 GiB gp2 volume in the same availability zone and gave it the name tag “My Volume”. After it became Available, I attached it to the Lab instance using device name /dev/sdf.
+
+\textbf{Observations:}
+\begin{itemize}
+    \item The volume quickly changed from Creating to Available.
+    \item After attaching, it showed In-use status.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{1b.png}
+    \includegraphics[width=0.9\textwidth]{2a.png}
+    \caption{EBS Volumes list showing the new 1 GiB “My Volume” attached to the Lab instance}
+\end{figure}
+
+This screenshot shows both the original 8 GiB root volume and my new volume side by side, which helped me confirm everything was set up correctly.
+
+\subsection*{Task 3 \& 4: Connecting and Preparing the Volume}
+I used EC2 Instance Connect to open a terminal to the Lab instance. First I ran df -h and saw only the root volume. Then I created an ext3 file system on /dev/sdf, made a mount point /mnt/data-store, mounted the volume, and added an entry to /etc/fstab so it would mount automatically on reboot. After that, df -h showed the new volume correctly mounted. I created a test file with some text inside.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{3a.png}
+    \includegraphics[width=0.9\textwidth]{4c.png}
+    \caption{Output of df -h command after mounting the new volume at /mnt/data-store}
+\end{figure}
+
+This picture proves that the volume was properly formatted, mounted, and usable. Seeing /dev/xvdf appear with 976M capacity made it clear the steps worked.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{5a.png}
+    \includegraphics[width=0.9\textwidth]{5c.png}
+    \caption{Content of /etc/fstab file showing the new line added for persistent mounting}
+\end{figure}
+
+Adding the line to fstab was important — I learned that without it the volume would not mount after a restart.
+
+\subsection*{Task 5: Creating a Snapshot}
+I went back to the console, selected My Volume, and created a snapshot named “My Snapshot”. It went from Pending to Completed quickly. Then in the terminal I deleted the test file I had created earlier to simulate losing data.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{5b.png}
+    \caption{Snapshots section showing “My Snapshot” in Completed state}
+\end{figure}
+
+This screenshot confirms the backup was successful. I found it interesting that snapshots only store the blocks that have data, so empty space does not waste storage.
+
+\subsection*{Task 6: Restoring from Snapshot}
+I selected the snapshot and created a new volume from it, naming it “Restored Volume” in the same AZ. After it was available, I attached it to the Lab instance as /dev/sdg. In the terminal I created a new mount point /mnt/data-store2, mounted /dev/sdg there, and checked — the file.txt was back!
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{6c.png}
+    \caption{Figure 6: Contents of /mnt/data-store2 showing file.txt restored from the snapshot}
+\end{figure}
+
+This last screenshot was exciting — it proved that the snapshot really worked as a backup and I could recover the data perfectly.
+
+% -------------------- Results --------------------
+\section*{Results Summary}
+Complated Tasks List as Per Requirements:
+\begin{itemize}
+    \item Created and attached 1 GiB EBS volume
+    \item Formatted, mounted, and made persistent via fstab
+    \item Wrote test data and verified
+    \item Created snapshot
+    \item Deleted test file
+    \item Restored snapshot to new volume and recovered the file
+\end{itemize}
+% -------------------- Conclusion --------------------
+\section*{Conclusion}
+This lab helped me understand that EBS volumes are very useful for keeping data safe even if the EC2 instance stops or has problems. I liked seeing how easy it is to attach extra storage, format it, and use it like a normal disk. The snapshot feature was the most interesting part — it gave me confidence that I can protect important files and recover them when needed. Overall this lab made the idea of block storage in the cloud much clearer to me and showed why it is more reliable than instance store.
+\end{document}
