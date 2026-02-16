@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{article}
+% -------------------- Packages --------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{mathpazo} % Palatino font
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{hyperref}
+\onehalfspacing
+\linespread{1.05}
+\pagestyle{empty}
+\date{}
+\title{\textbf{Build a Database Server}}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+% -------------------- Objective --------------------
+\section*{Objective}
+The main goal of this lab was to set up a managed relational database using Amazon RDS. I created a secure MySQL database with high availability, allowed only the web server to connect to it, and then used a web application to add, change, and delete contacts to check that everything was working properly.
+\textbf{Key AWS services and concepts covered:}
+\begin{itemize}
+    \item Amazon Relational Database Service (RDS)
+    \item Security groups to control who can connect
+    \item DB Subnet Groups for placing the database in different zones
+    \item Multi-AZ setup for better reliability
+    \item Connecting a web app to the database using endpoint and login details
+\end{itemize}
+% -------------------- Scenario --------------------
+\section*{Scenario}
+The lab already had a VPC called Lab VPC with a web server running in a public subnet. I had to add a MySQL database using RDS, make it run across two Availability Zones so it would be more reliable, allow only the web server to reach it, and then test it by using an Address Book web application to save and manage contact information.
+\subsubsection*{Lab Architecture Overview}
+The setup had a web server in a public subnet talking to a Multi-AZ RDS MySQL database in private subnets across two Availability Zones.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{arch.png}
+    \caption{Web server connected to Multi-AZ RDS MySQL database in the Lab VPC}
+    \label{fig:rds-setup}
+\end{figure}
+
+This picture made it easier to see how the database stays hidden from the internet but still works with the web app.
+
+% -------------------- Working Methodology --------------------
+\section*{Working Methodology}
+\subsection*{Task 1: Creating a Security Group for the RDS DB Instance}
+I went to the VPC console and made a new security group called DB Security Group in the Lab VPC. I added a rule to allow MySQL traffic (port 3306) only from the Web Security Group.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{1a.png}
+    \caption{Inbound rules in DB Security Group allowing MySQL access from Web Security Group}
+\end{figure}
+
+This screenshot shows the rule was added correctly so only the web server could connect.
+
+\subsection*{Task 2: Creating a DB Subnet Group}
+In the RDS console I created a DB Subnet Group named DB-Subnet-Group in Lab VPC. I picked private subnets from us-east-1a and us-east-1b.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{2a.png}
+    \caption{DB Subnet Group with subnets from two Availability Zones}
+\end{figure}
+
+This confirmed the group was set up to support Multi-AZ.
+\newpage
+\subsection*{Task 3: Creating an Amazon RDS DB Instance}
+I created a MySQL database with these settings:
+\begin{itemize}
+    \item Name: lab-db
+    \item Engine: MySQL
+    \item Type: Dev/Test
+    \item Deployment: Multi-AZ
+    \item Instance: db.t3.micro
+    \item Storage: 20 GB General Purpose SSD
+    \item Username: main
+    \item Password: lab-password
+    \item Database name: lab
+    \item VPC: Lab VPC
+    \item Security group: DB Security Group
+\end{itemize}
+I turned off extra monitoring, backups, and encryption so it would finish faster. After waiting a few minutes, it showed Available and I copied the endpoint.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{3a.png}
+    \caption{RDS database lab-db with Available status and Multi-AZ turned on}
+\end{figure}
+
+This screenshot shows the database was up and ready.
+\newpage
+
+\subsection*{Task 4: Interacting with the Database Using the Web App}
+I opened the web server IP in a browser and went to the RDS part of the app. I filled in the RDS endpoint, database name lab, username main, password lab-password, and clicked Submit. The Address Book appeared. I added some contacts, changed one, and deleted another to test it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{4a.png}
+    \includegraphics[width=0.9\textwidth]{4b.png}
+    \includegraphics[width=0.9\textwidth]{4d.png}
+    \caption{Address Book app displaying contacts saved in the RDS database}
+\end{figure}
+
+This last screenshot shows the app working and saving data properly.
+
+% -------------------- Results --------------------
+\section*{Results Summary}
+All parts were done correctly:
+\begin{itemize}
+    \item Made DB Security Group
+    \item Created DB Subnet Group in two AZs
+    \item Started Multi-AZ RDS MySQL instance lab-db
+    \item Connected the web app to the database
+    \item Added, edited, and deleted contacts successfully
+\end{itemize}
+% -------------------- Conclusion --------------------
+\section*{Conclusion}
+This lab showed me how Amazon RDS makes setting up and running a database much simpler than doing it manually on an EC2 instance. I liked figuring out how to use security groups and subnet groups to keep things secure. The Multi-AZ part was interesting because it automatically keeps a backup copy in another zone. The best part was opening the web app and seeing it actually save contacts to the database I just made. It helped me understand why managed database services are so useful in real projects.
+\end{document}
