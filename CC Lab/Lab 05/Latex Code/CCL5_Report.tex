@@ -1,0 +1,91 @@
+\documentclass[12pt]{article}
+
+% Page setup
+\usepackage[a4paper, margin=1in]{geometry}
+
+% Font
+\usepackage{mathpazo}
+
+% Formatting packages
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage{float} % For [H] placement
+
+% Remove page numbers
+\pagenumbering{gobble}
+
+% Line spacing
+\onehalfspacing
+
+% Code style
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    breaklines=true,
+    tabsize=2
+}
+
+% Section formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+
+\begin{document}
+\vspace{1cm}
+
+\section*{Experiment Name}
+Write a program to identify unique identifiers from a C program using a basic lexical analyzer.
+
+\section*{Objective}
+The objective of this experiment is to design and implement a basic lexical analyzer that scans a C program and detects valid identifiers. The program identifies unique identifiers while ignoring keywords, invalid tokens, and duplicates. This helps in understanding the working of lexical analysis in compiler design.
+
+\section*{Algorithm}
+\begin{enumerate}
+    \item Start the program.
+    \item Read the input C program from a file or user input.
+    \item Define a list of C keywords (such as int, float, char, if, while, return, etc.).
+    \item Initialize an empty set or list to store unique identifiers.
+    \item Read the program line by line.
+    \item For each line, break the line into tokens using delimiters such as spaces, commas, semicolons, parentheses, and operators.
+    \item For each token:
+    \begin{enumerate}
+        \item Check if the token starts with a letter (a--z or A--Z) or an underscore (\_).
+        \item Check if the remaining characters of the token contain only letters, digits, or underscores.
+        \item If the token does not satisfy identifier rules, skip it.
+        \item Compare the token with the list of C keywords.
+        \item If the token matches a keyword, ignore it.
+        \item Otherwise, check whether the identifier is already stored.
+        \item If it is not present, add it to the list of unique identifiers.
+    \end{enumerate}
+    \item Continue scanning until the entire program is processed.
+    \item Display all unique identifiers found in the C program.
+    \item Stop the program.
+\end{enumerate}
+
+\newpage
+
+\section*{Source Code}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{source.png}
+    \caption{Source code for lexical analyzer to detect unique identifiers}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{input.png}
+    \caption{Input code for lexical analyzer to detect unique identifiers}
+\end{figure}
+
+\section*{Output Screenshot}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{output.png}
+    \caption{Output showing all unique identifiers extracted from the C program}
+\end{figure}
+
+\section*{Discussion}
+This experiment demonstrates the design of a simple lexical analyzer to extract identifiers from a C program. The analyzer scans the input, applies identifier rules, removes keywords, and ensures uniqueness using a suitable data structure. This experiment provides a clear understanding of tokenization, identifier recognition, and the importance of lexical analysis in the first phase of a compiler.
+
+\end{document}
