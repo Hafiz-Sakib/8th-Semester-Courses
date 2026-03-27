@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 50
+#define LEN 100
+
+void detectAndRemoveLeftRecursion(char grammar[MAX][LEN], int n)
+{
+    char left[LEN], right[LEN];
+    char productions[10][LEN];
+    char alpha[10][LEN];
+    char beta[10][LEN];
+
+    int i,j;
+
+    for(i=0;i<n;i++)
+    {
+        strcpy(left,"");
+        strcpy(right,"");
+
+        sscanf(grammar[i], "%[^-]->%[^\n]", left, right);
+
+        int pcount=0;
+        char *token=strtok(right,"|");
+
+        while(token!=NULL)
+        {
+            strcpy(productions[pcount++], token);
+            token=strtok(NULL,"|");
+        }
+
+        int acount=0, bcount=0;
+
+        for(j=0;j<pcount;j++)
+        {
+            if(strncmp(productions[j],left,strlen(left))==0)
+            {
+                strcpy(alpha[acount++],productions[j]+strlen(left));
+            }
+            else
+            {
+                strcpy(beta[bcount++],productions[j]);
+            }
+        }
+
+        if(acount>0)
+        {
+            printf("\nLeft Recursion Found in %s\n",left);
+
+            printf("\nGrammar after removing left recursion:\n");
+
+            printf("%s -> ",left);
+            for(j=0;j<bcount;j++)
+            {
+                printf("%s%s' ",beta[j],left);
+                if(j!=bcount-1) printf("| ");
+            }
+
+            printf("\n%s' -> ",left);
+            for(j=0;j<acount;j++)
+            {
+                printf("%s%s' ",alpha[j],left);
+                if(j!=acount-1) printf("| ");
+            }
+
+            printf("| ε\n");
+        }
+        else
+        {
+            printf("\nNo left recursion in: %s\n",grammar[i]);
+            printf("%s\n",grammar[i]);
+        }
+    }
+}
+
+int main()
+{
+    char grammar[MAX][LEN];
+    int n=0;
+
+    printf("Enter grammar rules (press ENTER on empty line to finish):\n");
+
+    while(1)
+    {
+        fgets(grammar[n],LEN,stdin);
+
+        grammar[n][strcspn(grammar[n],"\n")] = 0; // remove newline
+
+        if(strlen(grammar[n]) == 0) // empty line stops input
+            break;
+
+        n++;
+    }
+
+    detectAndRemoveLeftRecursion(grammar,n);
+
+    return 0;
+}
