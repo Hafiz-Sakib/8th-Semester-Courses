@@ -1,0 +1,117 @@
+#include <iostream>
+#include <map>
+#include <vector>
+#include <set>
+#include <sstream>
+using namespace std;
+
+map<string, vector<vector<string>>> grammar;
+map<string, set<string>> FIRST;
+
+bool isNonTerminal(string s)
+{
+    return isupper(s[0]);
+}
+
+// Split string by space
+vector<string> split(string s)
+{
+    vector<string> tokens;
+    stringstream ss(s);
+    string word;
+    while (ss >> word)
+    {
+        tokens.push_back(word);
+    }
+    return tokens;
+}
+
+set<string> computeFIRST(string symbol)
+{
+    if (!FIRST[symbol].empty())
+        return FIRST[symbol];
+
+    set<string> result;
+
+    if (!isNonTerminal(symbol) || symbol == "ε")
+    {
+        result.insert(symbol);
+        return result;
+    }
+
+    for (auto production : grammar[symbol])
+    {
+        bool allNullable = true;
+
+        for (auto sym : production)
+        {
+            set<string> temp = computeFIRST(sym);
+
+            for (auto t : temp)
+            {
+                if (t != "ε")
+                    result.insert(t);
+            }
+
+            if (temp.find("ε") == temp.end())
+            {
+                allNullable = false;
+                break;
+            }
+        }
+
+        if (allNullable)
+        {
+            result.insert("ε");
+        }
+    }
+
+    FIRST[symbol] = result;
+    return result;
+}
+
+int main()
+{
+    int n;
+    cout << "Enter number of productions: ";
+    cin >> n;
+    cin.ignore();
+
+    cout << "Enter productions (e.g., E -> T E'):\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        string line;
+        getline(cin, line);
+
+        int pos = line.find("->");
+        string lhs = line.substr(0, pos - 1);
+        string rhs = line.substr(pos + 3);
+
+        stringstream ss(rhs);
+        string prod;
+
+        while (getline(ss, prod, '|'))
+        {
+            grammar[lhs].push_back(split(prod));
+        }
+    }
+
+    for (auto g : grammar)
+    {
+        computeFIRST(g.first);
+    }
+
+    cout << "\nFIRST sets:\n\n";
+    for (auto g : grammar)
+    {
+        cout << "FIRST(" << g.first << ") = { ";
+        for (auto x : FIRST[g.first])
+        {
+            cout << x << " ";
+        }
+        cout << "}\n";
+    }
+
+    return 0;
+}
