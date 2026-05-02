@@ -1,0 +1,59 @@
+Assignment: 01 (CT-3)                                                                                           Full Marks: 10
+
+A fintech company in Bangladesh wants to build a system to detect fraudulent transactions.
+
+Given Information:
+
+
+
+
+
+Dataset size: ~50,000 transactions
+
+
+
+Features:
+
+
+
+
+
+Transaction amount
+
+
+
+Time of transaction
+
+
+
+User location
+
+
+
+Device type
+
+
+
+Transaction history
+
+
+
+Target: Fraud (Yes/No)
+
+
+
+Problem type: Binary classification
+
+
+
+Challenges:
+
+
+
+
+
+Highly imbalanced data (fraud cases are rare)
+
+
+
+Suggest a system to me that will solve this problem and keep the challenge point in mind so that the system works fine. 
