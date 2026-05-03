@@ -1,0 +1,46 @@
+To solve this fraud detection problem, the following AI-based approach is recommended:
+
+1. Data Preprocessing:
+
+* Handle missing values and outliers
+* Normalize numerical features like transaction amount
+* Encode categorical features (location, device type)
+
+2. Handling Imbalanced Data:
+
+* Use techniques like SMOTE (Synthetic Minority Over-sampling Technique)
+* Alternatively use undersampling or class-weighted models
+
+3. Feature Engineering:
+
+* Extract time-based features (hour, day, weekend)
+* Create behavioral features from transaction history
+* Detect unusual spending patterns
+
+4. Model Selection:
+
+* Start with Logistic Regression (baseline)
+* Use tree-based models like Random Forest and Gradient Boosting (XGBoost, LightGBM)
+* These models perform well on tabular and imbalanced data
+
+5. Evaluation Metrics:
+
+* Accuracy is not suitable due to imbalance
+* Use Precision, Recall, F1-score
+* ROC-AUC and PR-AUC are important
+
+6. Model Tuning:
+
+* Use cross-validation
+* Hyperparameter tuning with Grid Search or Random Search
+
+7. Deployment:
+
+* Build API for real-time prediction
+* Monitor model performance and retrain periodically
+
+8. End-to-End Pipeline:
+
+* Data collection → preprocessing → feature engineering → training → evaluation → deployment → monitoring
+
+The most suitable models are Gradient Boosting models (like XGBoost or LightGBM) due to their strong performance on structured data and ability to handle imbalance.

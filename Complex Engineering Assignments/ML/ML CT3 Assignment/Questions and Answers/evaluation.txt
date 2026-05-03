@@ -1,0 +1,2 @@
+The AI give a solid plan for spotting fraud in transactions. It explain well how to handle imbalanced data using SMOTE and suggest strong models like Random Forest and Gradient Boosting. I liked the focus on metrics like precision, recall and ROC-AUC.
+But it miss some important fintech stuff like real-time processing, data privacy, and how easy to understand why the model flag something as fraud. Overall, XGBoost seems the best option here. The pipeline is practical but could talk more about deployment challenges.
