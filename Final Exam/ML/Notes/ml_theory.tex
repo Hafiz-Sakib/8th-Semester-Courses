@@ -1,0 +1,725 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[a4paper, margin=2.5cm, headheight=16pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathpazo}          % Palatino font for text + math
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{mdframed}
+\usepackage{parskip}
+\usepackage{hyperref}
+
+% Global table row height & cell padding
+\setlength{\extrarowheight}{6pt}
+\setlength{\tabcolsep}{12pt}
+
+% Colors
+\definecolor{headerblue}{RGB}{30, 80, 160}
+\definecolor{lightblue}{RGB}{220, 235, 250}
+\definecolor{questionbg}{RGB}{240, 248, 255}
+\definecolor{answerbg}{RGB}{250, 252, 255}
+\definecolor{tablehead}{RGB}{50, 100, 180}
+
+% Page style
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{headerblue}{\textbf{Machine Learning Theory}}}
+\fancyhead[R]{\textcolor{headerblue}{\textit{Exam Questions \& Answers}}}
+\fancyfoot[C]{\textcolor{gray}{\thepage}}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{headerblue}\leaders\hrule height \headrulewidth\hfill}}
+
+% Question box style
+\mdfdefinestyle{questionstyle}{
+    backgroundcolor=questionbg,
+    linecolor=headerblue,
+    linewidth=1.5pt,
+    leftline=true,
+    rightline=false,
+    topline=false,
+    bottomline=false,
+    innerleftmargin=10pt,
+    innerrightmargin=10pt,
+    innertopmargin=6pt,
+    innerbottommargin=6pt,
+}
+
+% Answer box style
+\mdfdefinestyle{answerstyle}{
+    backgroundcolor=white,
+    linecolor=gray!30,
+    linewidth=0.5pt,
+    innerleftmargin=10pt,
+    innerrightmargin=10pt,
+    innertopmargin=6pt,
+    innerbottommargin=6pt,
+}
+
+% Table spacing
+\renewcommand{\arraystretch}{1.7}
+
+% Table column types
+\newcolumntype{H}{>{\columncolor{tablehead}\color{white}\bfseries}l}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+% Custom commands
+\newcommand{\question}[2]{%
+    \begin{mdframed}[style=questionstyle]
+        \textbf{\textcolor{headerblue}{Q#1.}} \textbf{#2}
+    \end{mdframed}%
+    \vspace{2pt}%
+}
+
+\newcommand{\ans}{\textbf{\textcolor{headerblue}{Answer:}}\\[4pt]}
+\newcommand{\subhead}[1]{\textbf{\textcolor{headerblue}{#1}}}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\bfseries\textcolor{headerblue}{Machine Learning}\par}
+    \vspace{0.5cm}
+    {\LARGE\textcolor{gray}{Exam Questions with Answers}\par}
+    \vspace{1.5cm}
+    \rule{\textwidth}{1.5pt}
+    \vspace{0.3cm}
+    \rule{\textwidth}{0.5pt}
+    \vspace{2cm}
+    {\large Prepared by: \textbf{Sharika}\par}
+    \vfill
+    {\small All answers are written in simple English for easy understanding.}
+\end{titlepage}
+
+\setlength{\parskip}{6pt}
+
+%===============================================================
+\question{1}{Describe three methods for handling missing data and explain when each would be appropriate.}
+
+\ans
+
+\subhead{Method 1: Deletion (Removing Missing Data)}
+
+We remove rows or columns that have missing values.
+
+\textit{When to use:} Use this when very few rows have missing data (less than 5\%). If you remove too many rows, you lose important information.
+
+\subhead{Method 2: Mean / Median / Mode Imputation (Filling with a Value)}
+
+We replace missing values with the average (mean), middle value (median), or most common value (mode) of that column.
+
+\textit{When to use:} Use mean for numbers like age or salary. Use median when data has extreme values. Use mode for categories like gender or color.
+
+\subhead{Method 3: Prediction-Based Imputation (Using a Model to Fill)}
+
+We use a machine learning model to predict what the missing value should be, based on other data.
+
+\textit{When to use:} Use this when many values are missing and accuracy is very important. It is more complex but gives better results.
+
+\vspace{10pt}
+%===============================================================
+\question{2}{Define cross-validation. Explain the purpose of using K-fold cross-validation and describe the steps involved in applying it to a dataset.}
+
+\ans
+
+Cross-validation is a method to test how well a machine learning model works on new data. It helps us check if the model is learning well or just memorizing the training data.
+
+\subhead{What is K-Fold Cross-Validation?}
+
+K-fold cross-validation splits the data into $K$ equal parts (called folds). The model is trained and tested $K$ times. Each time, a different fold is used for testing and the rest for training.
+
+\subhead{Purpose:}
+\begin{itemize}[leftmargin=*]
+    \item It gives a more reliable score for the model.
+    \item It uses all data for both training and testing.
+    \item It helps detect overfitting (when the model is too focused on training data).
+\end{itemize}
+
+\subhead{Steps:}
+\begin{enumerate}[leftmargin=*]
+    \item Split the dataset into $K$ equal parts (e.g., $K = 5$).
+    \item Use fold 1 as the test set. Use folds 2, 3, 4, 5 for training.
+    \item Train the model and record the accuracy.
+    \item Repeat with fold 2 as the test set, and so on.
+    \item Calculate the average accuracy from all $K$ rounds.
+\end{enumerate}
+
+\vspace{10pt}
+%===============================================================
+\question{3}{Compare between Bagging and Boosting algorithm.}
+
+\ans
+
+\begin{tabularx}{\textwidth}{|>{\bfseries}l|L|L|}
+\hline
+\rowcolor{tablehead}\textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{Bagging}} & \textcolor{white}{\textbf{Boosting}} \\
+\hline
+Training & Models train at the same time (parallel) & Models train one after another (sequential) \\
+\hline
+Focus & Each model gets equal importance & Each new model focuses on the mistakes of the last one \\
+\hline
+Goal & Reduces variance (overfitting) & Reduces bias (underfitting) \\
+\hline
+Example & Random Forest & AdaBoost, XGBoost \\
+\hline
+Speed & Faster (parallel) & Slower (sequential) \\
+\hline
+\end{tabularx}
+
+\vspace{10pt}
+%===============================================================
+\question{4}{What is Supervised Machine Learning? Explain how does it work.}
+
+\ans
+
+Supervised machine learning is a type of machine learning where the computer learns from \textbf{labeled data}. Labeled data means each input has a correct answer (label) already given.
+
+\subhead{How Does It Work?}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Give labeled data:} We give the model many examples. For example: house size = input, house price = label.
+    \item \textbf{Model learns:} The model finds patterns between the input and the label.
+    \item \textbf{Make predictions:} After learning, the model can predict the answer for new inputs it has not seen before.
+    \item \textbf{Check accuracy:} We compare the model's predictions with the real answers to see how well it learned.
+\end{enumerate}
+
+\textit{Examples:} Predicting house prices (regression), classifying emails as spam or not spam (classification).
+
+\vspace{10pt}
+%===============================================================
+\question{5}{Explain the concept of k-fold cross-validation and its advantages over simple train-test splits in case of imbalanced dataset.}
+
+\ans
+
+K-fold cross-validation divides the data into $K$ equal groups. The model is trained $K$ times, using a different group for testing each time. The average score from all runs gives a final result.
+
+\subhead{Advantages over Simple Train-Test Split (Especially for Imbalanced Datasets):}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Better use of data:} Every data point is used for both training and testing.
+    \item \textbf{More reliable result:} The average of $K$ scores is more stable than one single score.
+    \item \textbf{Handles imbalance better:} In an imbalanced dataset (e.g., 90\% class A, 10\% class B), a simple split may put all minority class examples in training only. K-fold ensures the minority class appears in each test fold.
+    \item \textbf{Less bias:} It reduces the chance of getting lucky (or unlucky) with one particular split.
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{6}{List down five differences between Machine Learning and Artificial Intelligence.}
+
+\ans
+
+\begin{tabularx}{\textwidth}{|c|L|L|}
+\hline
+\rowcolor{tablehead}\textcolor{white}{\textbf{\#}} & \textcolor{white}{\textbf{Artificial Intelligence (AI)}} & \textcolor{white}{\textbf{Machine Learning (ML)}} \\
+\hline
+1 & AI is the big field of making smart machines. & ML is a part of AI that focuses on learning from data. \\
+\hline
+2 & AI can use rules, logic, and reasoning. & ML only learns from examples and patterns. \\
+\hline
+3 & AI does not always need data to work. & ML always needs data to learn. \\
+\hline
+4 & AI tries to copy human thinking. & ML tries to improve predictions automatically. \\
+\hline
+5 & Examples: robots, chess programs. & Examples: spam filters, recommendation systems. \\
+\hline
+\end{tabularx}
+
+\vspace{10pt}
+%===============================================================
+\question{7}{Write down the differences between Supervised and Unsupervised Machine Learning.}
+
+\ans
+
+\begin{tabularx}{\textwidth}{|>{\bfseries}l|L|L|}
+\hline
+\rowcolor{tablehead}\textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{Supervised Learning}} & \textcolor{white}{\textbf{Unsupervised Learning}} \\
+\hline
+Labels & Data has labels (answers given) & Data has no labels \\
+\hline
+Goal & Predict an output & Find hidden patterns or groups \\
+\hline
+Example & Spam detection, price prediction & Customer grouping, topic detection \\
+\hline
+Feedback & Model learns from correct answers & No correct answers given \\
+\hline
+Algorithms & Linear Regression, SVM & K-Means, DBSCAN \\
+\hline
+\end{tabularx}
+
+\vspace{10pt}
+%===============================================================
+\question{8}{Describe Hard Margin of SVM.}
+
+\ans
+
+SVM stands for \textbf{Support Vector Machine}. It is a classification algorithm that draws a line (or boundary) to separate two classes of data.
+
+\subhead{What is Hard Margin SVM?}
+
+Hard margin SVM finds the best line (called the \textit{decision boundary} or \textit{hyperplane}) that separates two classes with the largest possible gap (margin). It assumes the data is perfectly separable --- meaning no data point crosses to the wrong side.
+
+\subhead{Key Terms:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Decision Boundary:} The line that separates the two classes.
+    \item \textbf{Margin:} The distance between the decision boundary and the nearest data points from each class.
+    \item \textbf{Support Vectors:} The data points that are closest to the decision boundary. These points define the margin.
+\end{itemize}
+
+\subhead{Goal:}
+
+Maximize the margin between the two classes. The formula is:
+\[
+\text{Maximize} \quad \frac{2}{\|\mathbf{w}\|}
+\]
+where $\mathbf{w}$ is the weight vector that defines the boundary.
+
+\subhead{Limitation:}
+
+Hard margin SVM only works when the data is perfectly separable (no overlapping points). Real-world data often has noise, so Soft Margin SVM is used instead.
+
+\vspace{10pt}
+%===============================================================
+\question{9}{Describe briefly about univariate linear regression in machine learning.}
+
+\ans
+
+Univariate linear regression is the simplest type of regression. It uses \textbf{one input} (feature) to predict \textbf{one output} (label).
+
+\textit{Example:} We use house size ($X$) to predict house price ($Y$).
+
+\subhead{Hypothesis Function:}
+\[
+h(x) = \theta_0 + \theta_1 x
+\]
+Here, $\theta_0$ is the intercept (starting point) and $\theta_1$ is the slope (how much $Y$ changes when $X$ increases by 1).
+
+\subhead{Cost Function (How to Measure Accuracy):}
+\[
+J(\theta_0, \theta_1) = \frac{1}{2m} \sum_{i=1}^{m} \left(h(x^{(i)}) - y^{(i)}\right)^2
+\]
+This calculates the average squared difference between predicted and actual values. A smaller value means the model is more accurate.
+
+\vspace{10pt}
+%===============================================================
+\question{10}{Briefly describe the gradient descent algorithm for linear regression.}
+
+\ans
+
+Gradient descent is a method to find the best weights $(w_0, w_1, \ldots, w_n)$ that minimize the cost function. It repeats small steps to reduce the error.
+
+\subhead{Algorithm: \texttt{GRADIENTDESCENT}$(X, y, \alpha, \text{maxIter})$}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{for} $j = 1$ to $m$: set $x_0^{(j)} = 1$ \hfill \textit{[Add intercept feature to each example]}
+    \item Initialize $w_0, w_1, \ldots, w_n$ randomly
+    \item $\text{iter} = 0$
+    \item \textbf{while} $\text{iter++} \leq \text{maxIter}$:
+    \begin{enumerate}
+        \item \textbf{for} $j = 0$ to $n$: $\text{slope}_j = 0$ \hfill \textit{[Reset slopes to zero]}
+        \item \textbf{for} $i = 1$ to $m$: \hfill \textit{[Loop over all training examples]}
+        \begin{enumerate}
+            \item $\hat{y} = w_0 + w_1 x_1^{(i)} + \cdots + w_n x_n^{(i)}$ \hfill \textit{[Predict]}
+            \item $e = \hat{y} - y^{(i)}$ \hfill \textit{[Calculate error]}
+            \item \textbf{for} $j = 0$ to $n$: $\text{slope}_j = \text{slope}_j + e \cdot x_j^{(i)}$ \hfill \textit{[Accumulate slopes]}
+        \end{enumerate}
+        \item \textbf{for} $j = 0$ to $n$: $w_j = w_j - \alpha \cdot \text{slope}_j$ \hfill \textit{[Update weights]}
+    \end{enumerate}
+    \item \textbf{return} $w_0, w_1, \ldots, w_n$
+\end{enumerate}
+
+\subhead{Key Terms:}
+\begin{itemize}[leftmargin=*]
+    \item $\alpha$ = learning rate. Controls the step size.
+    \item $\text{slope}_j$ = total gradient for weight $j$.
+    \item $e$ = error = predicted value minus actual value.
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{11}{How gradient descent automatically improves the hypothesis function.}
+
+\ans
+
+Gradient descent automatically updates $\theta_0$ and $\theta_1$ in each step. After each update, the hypothesis function $h(x) = \theta_0 + \theta_1 x$ gets closer to the real data.
+
+As $\theta$ values change, the line moves and fits the data better. The cost $J$ decreases with each step. When the cost stops decreasing, the model has found the best fit line.
+
+This is how gradient descent automatically improves the model without us manually choosing the slope and intercept.
+
+\vspace{10pt}
+%===============================================================
+\question{12}{What is a classification problem in machine learning? Give an example.}
+
+\ans
+
+A classification problem is when the output (label) belongs to a \textbf{specific category}, not a number. The model learns to place inputs into one of these categories.
+
+\subhead{Example:}
+
+\textit{Email classification:} The input is the email text. The output is either ``spam'' or ``not spam''. This is a \textbf{binary classification} (two categories).
+
+\subhead{Other Examples:}
+\begin{itemize}[leftmargin=*]
+    \item Predicting if a tumor is malignant (cancer) or benign (not cancer).
+    \item Recognizing handwritten digits (0 to 9) --- multi-class classification.
+    \item Classifying a photo as cat, dog, or bird.
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{13}{Describe briefly the logistic regression model and cost function of a single example.}
+
+\ans
+
+\subhead{Logistic Regression Model:}
+
+Logistic regression is used for classification. Unlike linear regression which gives any number, logistic regression gives a probability between 0 and 1.
+
+\textbf{Hypothesis (Sigmoid function):}
+\[
+h(x) = \frac{1}{1 + e^{-\boldsymbol{\theta}^T \mathbf{x}}}
+\]
+
+If $h(x) \geq 0.5$, we predict class 1. If $h(x) < 0.5$, we predict class 0.
+
+\subhead{Cost Function for a Single Example:}
+\[
+\text{Cost}(h(x), y) = \begin{cases}
+-\log(h(x)) & \text{if } y = 1 \\
+-\log(1 - h(x)) & \text{if } y = 0
+\end{cases}
+\]
+
+If $y = 1$ and our prediction $h(x)$ is close to 1, cost is low (good). If our prediction is far from 1, cost is high (bad). This pushes the model to predict correctly.
+
+\vspace{10pt}
+%===============================================================
+\question{14}{Briefly describe the process to develop a gradient descent for linear regression with regularization.}
+
+\ans
+
+Regularization is a technique to prevent overfitting. It adds a penalty to the cost function for large $\theta$ values.
+
+\subhead{Regularized Cost Function (Ridge / L2):}
+\[
+J(\boldsymbol{\theta}) = \frac{1}{2m} \sum_{i=1}^{m}\left(h(x^{(i)}) - y^{(i)}\right)^2 + \frac{\lambda}{2m} \sum_{j=1}^{n} \theta_j^2
+\]
+
+Here, $\lambda$ is the regularization parameter. It controls how much we penalize large $\theta$ values.
+
+\subhead{Gradient Descent Update with Regularization:}
+\[
+\theta_0 := \theta_0 - \alpha \cdot \frac{1}{m} \sum_{i=1}^{m}\left(h(x^{(i)}) - y^{(i)}\right) x_0^{(i)} \quad \text{[No regularization for } \theta_0\text{]}
+\]
+\[
+\theta_j := \theta_j \left(1 - \alpha\frac{\lambda}{m}\right) - \alpha \cdot \frac{1}{m} \sum_{i=1}^{m}\left(h(x^{(i)}) - y^{(i)}\right) x_j^{(i)} \quad \text{for } j \geq 1
+\]
+
+The term $\left(1 - \alpha\frac{\lambda}{m}\right)$ slightly shrinks $\theta_j$ in each step, which prevents it from becoming too large.
+
+\vspace{10pt}
+%===============================================================
+\question{15}{Derive the algorithm of Support Vector Machine (SVM). What is the use of an SVM?}
+
+\ans
+
+\subhead{What is SVM?}
+
+SVM is a supervised learning algorithm used for classification. It finds the best boundary (hyperplane) that separates two classes with the maximum margin.
+
+\subhead{SVM Algorithm (Derivation):}
+\begin{itemize}[leftmargin=*]
+    \item Given data points $(x^{(i)}, y^{(i)})$ where $y^{(i)} \in \{+1, -1\}$.
+    \item We want to find $\mathbf{w}$ (weights) and $b$ (bias) such that:
+    \[
+    \mathbf{w}^T \mathbf{x} + b \geq 1 \quad \text{for class } +1
+    \]
+    \[
+    \mathbf{w}^T \mathbf{x} + b \leq -1 \quad \text{for class } -1
+    \]
+    \item The margin between the two classes $= \dfrac{2}{\|\mathbf{w}\|}$.
+    \item To maximize the margin, we minimize $\dfrac{\|\mathbf{w}\|^2}{2}$.
+    \item \textbf{Optimization:} Minimize $\dfrac{1}{2}\|\mathbf{w}\|^2$ subject to $y^{(i)}\left(\mathbf{w}^T \mathbf{x}^{(i)} + b\right) \geq 1$.
+\end{itemize}
+
+\subhead{Uses of SVM:}
+\begin{itemize}[leftmargin=*]
+    \item Email spam detection.
+    \item Image classification (e.g., face recognition).
+    \item Medical diagnosis (cancer detection).
+    \item Text classification (news categories).
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{16}{Suppose you have $m=8$ training examples with $n=3$ features. The normal equation is $\boldsymbol{\theta} = (X^T X)^{-1} X^T \mathbf{y}$. What are the dimensions of $\boldsymbol{\theta}$, $X$, and $\mathbf{y}$?}
+
+\ans
+
+$m = 8$ training examples, $n = 3$ features. We add 1 extra feature ($x_0 = 1$) for the intercept, so total features $= n + 1 = 4$.
+
+\subhead{Dimensions:}
+\begin{itemize}[leftmargin=*]
+    \item $X$: has $m$ rows and $(n+1)$ columns. So $X$ is $8 \times 4$.
+    \item $\mathbf{y}$: has $m$ rows and 1 column. So $\mathbf{y}$ is $8 \times 1$.
+    \item $\boldsymbol{\theta}$: has $(n+1)$ rows and 1 column. So $\boldsymbol{\theta}$ is $4 \times 1$.
+\end{itemize}
+
+\subhead{Verification:}
+
+$X^T$ is $4 \times 8$. \quad $X^T X$ is $4 \times 4$. \quad $(X^T X)^{-1}$ is $4 \times 4$. \quad $X^T \mathbf{y}$ is $4 \times 1$.
+
+So $\boldsymbol{\theta} = (X^T X)^{-1} X^T \mathbf{y}$ is $4 \times 1$. \checkmark
+
+\vspace{10pt}
+%===============================================================
+\question{17}{In the context of supervised learning, what distinguishes the training data from the testing data, and why is this differentiation important?}
+
+\ans
+
+\subhead{Training Data:}
+
+This is the data we use to \textbf{teach} the model. The model sees the inputs and labels and learns patterns from them.
+
+\subhead{Testing Data:}
+
+This is data the model has \textbf{never seen} before. We use it to check how well the model predicts on new examples.
+
+\subhead{Why is this Differentiation Important?}
+\begin{itemize}[leftmargin=*]
+    \item It checks if the model actually learned or just memorized the training data (overfitting).
+    \item It gives a real-world measure of model performance.
+    \item It prevents us from reporting false accuracy (a model that only works on training data is not useful).
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{18}{How does bagging work as a method of increasing accuracy? How does boosting compare with bagging?}
+
+\ans
+
+\subhead{How Bagging Works:}
+\begin{itemize}[leftmargin=*]
+    \item Bagging stands for \textbf{Bootstrap Aggregating}.
+    \item It creates many small datasets by randomly sampling from the original data (with replacement).
+    \item It trains a separate model on each small dataset at the same time (parallel).
+    \item Final prediction is made by \textbf{voting} (for classification) or \textbf{averaging} (for regression).
+    \item Bagging reduces \textbf{variance} --- it makes the model more stable and less likely to overfit.
+\end{itemize}
+
+\subhead{How Boosting Compares:}
+\begin{itemize}[leftmargin=*]
+    \item Boosting trains models one after another (sequential).
+    \item Each new model focuses more on the examples that the previous model got wrong.
+    \item Boosting reduces \textbf{bias} --- it makes weak models stronger over time.
+    \item Boosting can overfit if not controlled (e.g., with regularization or early stopping).
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{19}{Explain the concept of a labeled dataset and its significance in the context of supervised learning algorithms.}
+
+\ans
+
+\subhead{What is a Labeled Dataset?}
+
+A labeled dataset is a collection of data where each input example has a correct output (answer) already attached to it.
+
+\subhead{Example:}
+\begin{itemize}[leftmargin=*]
+    \item Input: An email message. \quad Label: `Spam' or `Not Spam'.
+    \item Input: House size (1500 sq ft). \quad Label: Price (\$250,000).
+\end{itemize}
+
+\subhead{Why is it Significant in Supervised Learning?}
+\begin{itemize}[leftmargin=*]
+    \item The model learns by comparing its predictions to the correct labels.
+    \item Without labels, the model does not know if it is right or wrong.
+    \item More labeled data usually means better model performance.
+    \item Labeled data is the foundation of all supervised learning tasks.
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{20}{Write the regularized logistic regression cost function, including both the data term and the regularization term.}
+
+\ans
+
+The regularized logistic regression cost function is:
+\[
+J(\boldsymbol{\theta}) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log\left(h(x^{(i)})\right) + \left(1 - y^{(i)}\right) \log\left(1 - h(x^{(i)})\right) \right] + \frac{\lambda}{2m} \sum_{j=1}^{n} \theta_j^2
+\]
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{First part:} Data term --- measures how wrong the predictions are.
+    \item \textbf{Second part:} Regularization term --- penalizes large $\theta$ values to prevent overfitting.
+    \item \textbf{Note:} $\theta_0$ is \textbf{NOT} included in the regularization term.
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{21}{Derive the gradient of the cost function (regularized logistic regression).}
+
+\ans
+
+\subhead{For $\theta_0$ (no regularization):}
+\[
+\frac{\partial}{\partial \theta_0} J(\boldsymbol{\theta}) = \frac{1}{m} \sum_{i=1}^{m} \left(h(x^{(i)}) - y^{(i)}\right) x_0^{(i)}
+\]
+
+\subhead{For $\theta_j$ where $j \geq 1$ (with regularization):}
+\[
+\frac{\partial}{\partial \theta_j} J(\boldsymbol{\theta}) = \frac{1}{m} \sum_{i=1}^{m} \left(h(x^{(i)}) - y^{(i)}\right) x_j^{(i)} + \frac{\lambda}{m} \theta_j
+\]
+
+\subhead{Gradient Descent Update:}
+\[
+\theta_0 := \theta_0 - \alpha \cdot \frac{1}{m} \sum_{i=1}^{m} \left(h(x^{(i)}) - y^{(i)}\right) x_0^{(i)}
+\]
+\[
+\theta_j := \theta_j - \alpha \left[ \frac{1}{m} \sum_{i=1}^{m} \left(h(x^{(i)}) - y^{(i)}\right) x_j^{(i)} + \frac{\lambda}{m} \theta_j \right] \quad \text{for } j \geq 1
+\]
+
+\vspace{10pt}
+%===============================================================
+\question{22}{Explain how bias and variance are associated with logistic regression.}
+
+\ans
+
+\subhead{Bias:}
+
+Bias means the model is \textbf{too simple}. It makes wrong assumptions. High bias causes \textbf{underfitting} --- the model does not learn enough from the training data. In logistic regression, using very few features or a simple model causes high bias.
+
+\subhead{Variance:}
+
+Variance means the model is \textbf{too complex}. It learns too much from the training data, including noise. High variance causes \textbf{overfitting} --- the model works well on training data but badly on new data. In logistic regression, using too many features or polynomial terms causes high variance.
+
+\subhead{Goal:}
+
+We want \textbf{low bias} and \textbf{low variance}. This is called the \textit{bias-variance tradeoff}.
+
+\vspace{10pt}
+%===============================================================
+\question{23}{Discuss how regularization techniques can impact bias and variance in logistic regression models. Provide examples to illustrate.}
+
+\ans
+
+Regularization adds a penalty for large $\theta$ values. It controls model complexity.
+
+\subhead{Effect of Regularization:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{High $\lambda$ (strong regularization):} $\theta$ values are forced to be very small. The model becomes simpler. This \textit{reduces variance} but \textit{increases bias}. Risk: underfitting.
+    \item \textbf{Low $\lambda$ (weak regularization):} Little penalty. The model can become complex. This \textit{reduces bias} but \textit{increases variance}. Risk: overfitting.
+\end{itemize}
+
+\subhead{Example:}
+
+Suppose we classify if a tumor is cancerous.
+\begin{itemize}[leftmargin=*]
+    \item With $\lambda = 0$ (no regularization): the model uses complex curves to perfectly fit training data but fails on new data (\textbf{overfitting}).
+    \item With $\lambda = 10$ (high regularization): the model is too simple and misses real patterns (\textbf{underfitting}).
+    \item With $\lambda = 1$ (balanced): the model generalizes well to new data. \checkmark
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{24}{Differentiate between gradient descent and normal equation.}
+
+\ans
+
+\begin{tabularx}{\textwidth}{|>{\bfseries}l|L|L|}
+\hline
+\rowcolor{tablehead}\textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{Gradient Descent}} & \textcolor{white}{\textbf{Normal Equation}} \\
+\hline
+Approach & Iterative --- repeats many steps & Direct --- one step calculation \\
+\hline
+Learning Rate & Needs $\alpha$ (learning rate) & No learning rate needed \\
+\hline
+Speed (large data) & Works well with large datasets & Very slow for large datasets \\
+\hline
+Formula & $w_j := w_j - \alpha \cdot \text{slope}_j$ & $\boldsymbol{\theta} = (X^T X)^{-1} X^T \mathbf{y}$ \\
+\hline
+Scalability & Scales to millions of features & Fails when $n$ is very large ($> 10{,}000$) \\
+\hline
+\end{tabularx}
+
+\vspace{10pt}
+%===============================================================
+\question{25}{Write the Revised Gradient Descent Algorithm (Vectorized form).}
+
+\ans
+
+The Revised Gradient Descent is a faster, vectorized version. It uses matrix operations instead of loops, making it much more efficient.
+
+\subhead{Algorithm: \texttt{GRADIENTDESCENT}$(X, y, \alpha, \text{maxIter})$}
+
+\begin{enumerate}[leftmargin=*]
+    \item $X_E = [\mathbf{1}; X]$ \hfill \textit{[Add a column of 1s to $X$]}
+    \item $\mathbf{W} = [w_0, w_1, \ldots, w_n]^T$ \hfill \textit{[Initialize weights randomly]}
+    \item $\text{iter} = 0$
+    \item \textbf{while} $\text{iter++} \leq \text{maxIter}$:
+    \begin{enumerate}
+        \item $\hat{\mathbf{Y}} = X_E \cdot \mathbf{W}$ \hfill \textit{[Predict all outputs at once]}
+        \item $\mathbf{E} = \hat{\mathbf{Y}} - \mathbf{Y}$ \hfill \textit{[Calculate all errors at once]}
+        \item $\mathbf{S} = X_E^T \cdot \mathbf{E}$ \hfill \textit{[Calculate slopes using transpose]}
+        \item $\mathbf{W} = \mathbf{W} - \alpha \cdot \mathbf{S}$ \hfill \textit{[Update all weights at once]}
+    \end{enumerate}
+    \item \textbf{return} $w_0, w_1, \ldots, w_n$
+\end{enumerate}
+
+\subhead{Why is this better?}
+\begin{itemize}[leftmargin=*]
+    \item No inner for-loops. All calculations are done with matrices.
+    \item It is much faster, especially for large datasets.
+    \item $X_E$ is the extended $X$ matrix with 1s added for the bias term ($w_0$).
+\end{itemize}
+
+\vspace{10pt}
+%===============================================================
+\question{26}{Write the Lighter Gradient Descent Algorithm (Stochastic / Single-example update).}
+
+\ans
+
+The Lighter Gradient Descent updates the slope using only \textbf{ONE} training example per iteration step, instead of all $m$ examples. This makes each step faster but noisier.
+
+\subhead{Algorithm: \texttt{LIGHTERGRADIENTDESCENT}$(X, y, \alpha, \text{maxIter})$}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{for} $j = 1$ to $m$: set $x_0^{(j)} = 1$ \hfill \textit{[Add intercept feature]}
+    \item Initialize $w_0, w_1, \ldots, w_n$ randomly
+    \item $\text{iter} = 0$
+    \item \textbf{while} $\text{iter++} \leq \text{maxIter}$:
+    \begin{enumerate}
+        \item \textbf{for} $j = 0$ to $n$: $\text{slope}_j = 0$ \hfill \textit{[Reset slopes]}
+        \item $i = \text{iter}$ \hfill \textit{[Use one example: the $i$-th example]}
+        \item $\hat{y} = w_0 + w_1 x_1^{(i)} + \cdots + w_n x_n^{(i)}$ \hfill \textit{[Predict]}
+        \item $e = \hat{y} - y^{(i)}$ \hfill \textit{[Calculate error for this one example]}
+        \item \textbf{for} $j = 0$ to $n$: $\text{slope}_j = \text{slope}_j + e \cdot x_j^{(i)}$ \hfill \textit{[Accumulate slopes]}
+        \item \textbf{for} $j = 0$ to $n$: $w_j = w_j - \alpha \cdot \text{slope}_j$ \hfill \textit{[Update weights]}
+    \end{enumerate}
+    \item \textbf{return} $w_0, w_1, \ldots, w_n$
+\end{enumerate}
+
+\subhead{Key Difference from Standard Gradient Descent:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Standard GD:} uses ALL $m$ examples to compute slope before updating.
+    \item \textbf{Lighter GD:} uses only ONE example ($i = \text{iter}$) per update step.
+    \item Lighter GD is faster per step but may not converge as smoothly.
+\end{itemize}
+
+\vspace{1cm}
+\begin{center}
+\rule{0.5\textwidth}{0.5pt}\\[6pt]
+\textit{All answers are written in simple English for easy understanding.}
+\end{center}
+
+\end{document}
